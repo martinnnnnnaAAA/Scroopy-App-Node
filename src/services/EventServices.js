@@ -10,11 +10,12 @@ class EventServices {
             throw new Error(`Error al obtener los eventos del usuario: ${error.message}`);
         }
     }
+
     postEvento = async (titulo, fecha, horaInicio, horaFin, color, isAllDay, descripcion, fk_usuario, tipo) => {
         try {
             const repo = new EventRepository();
-            const evento = await repo.postEvento(evento);
-            return evento;
+            const resultado = await repo.postEvento(titulo, fecha, horaInicio, horaFin, color, isAllDay, descripcion, fk_usuario, tipo);
+            return resultado;
         } catch (error) {
             throw new Error(`Error al insertar el evento del usuario: ${error.message}`);
         }

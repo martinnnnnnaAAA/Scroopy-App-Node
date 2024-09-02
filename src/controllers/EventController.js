@@ -16,15 +16,36 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-   
-        const respuesta = await svc.postEvento(req.query.titulo, req.query.fecha, req.query.horaInicio, req.query.horaFin, req.query.color, req.query.isAllDay, req.query.descripcion, req.query.fk_usuario, req.query.tipo);
-        if([req.query.titulo, req.query.fecha, req.query.horaInicio, req.query.horaFin, req.query.color, req.query.isAllDay, req.query.descripcion, req.query.fk_usuario, req.query.tipo].some(element => element == null || element === "")){
-            return res.status(400).send({ error: `Hubo un error al insertar el evento, alguno de los parametros esta vacio: ${e.message}` });
-            
-        } else{
-       res.status(200).json({ success: true, message: eventos });
-       return respuesta
+    try {
+        const { titulo, fecha, horaInicio, horaFin, color, isAllDay, descripcion, fk_usuario, tipo } = req.body;
+
+        const missingParams = [
+            { name: 'titulo', value: titulo },
+            { name: 'fecha', value: fecha },
+            { name: 'horaInicio', value: horaInicio },
+            { name: 'horaFin', value: horaFin },
+            { name: 'color', value: color },
+            { name: 'isAllDay', value: isAllDay },
+            { name: 'descripcion', value: descripcion },
+            { name: 'fk_usuario', value: fk_usuario },
+            { name: 'tipo', value: tipo }
+        ].filter(param => param.value == null || param.value === "")
+          .map(param => param.name);
+
+        if (missingParams.length > 0) {
+            return res.status(400).send({ 
+                error: `Hubo un error al insertar el evento, los siguientes parámetros están vacíos o son nulos: ${missingParams.join(', ')}.` 
+            });
+        }
+
+        const respuesta = await svc.postEvento(titulo, fecha, horaInicio, horaFin, color, isAllDay, descripcion, fk_usuario, tipo);
+
+        res.status(200).json({ success: true, message: respuesta });
+    } catch (e) {
+        res.status(500).send({ error: `Hubo un error al insertar el evento: ${e.message}` });
     }
 });
+
+
 
 module.exports = router;
