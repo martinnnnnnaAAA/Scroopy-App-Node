@@ -1,8 +1,7 @@
-// index.js
 const express = require('express');
 const cors = require('cors');
-const EventRouter = require('./src/controllers/EventController.js');
-const TwilioRouter = require('./src/controllers/twilioController.js');  // Agregado
+const EventRouter = require('./src/controllers/EventController'); // Removed .js extension
+const TwilioRouter = require('./src/controllers/twilioController'); // Removed .js extension
 const dotenv = require('dotenv').config();
 const bodyParser = require('body-parser');
 
@@ -16,7 +15,7 @@ app.use(express.json());
 app.use("/front", express.static("public"));
 
 app.use('/eventos', EventRouter);
-app.post('/messages/send', TwilioRouter.sendMessage);  // Agregado
+app.use('/messages', TwilioRouter); // Mount the TwilioRouter at the /messages path
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
